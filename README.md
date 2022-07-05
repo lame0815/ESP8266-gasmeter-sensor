@@ -88,5 +88,5 @@ Hinweis: Teilweise steht in den Feldern Anfangs Quatsch drin, den muss man zuvor
 6. Nach dem Speichern befindet sich das Gerät im Client Mode und ist mit dem heimischen WLAN verbunden.
 7. Nun muss man die IP im Heimnetzwerk herausfinden (z.B. im Router) und kann den Sensor darüber aufrufen
 
-![Erster Start des Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/first_start.jpg "Erster Start des Sensors")
+![Erster Start des Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/first-start.jpg "Erster Start des Sensors")
 
