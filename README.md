@@ -103,8 +103,9 @@ Wird das Relais durchgeschaltet, leuchtet die im ESP8266 eingebaute LED für gen
 
 ### Festlegen eines MQTT-Servers
 Der Sensor erzeugt auf dem MQTT-Server die Datenpunkte
-/gassensor_626491/counter und
-/gassensor_626491/perminuteusag
+> /gassensor_XXXXXX/counter 
+und
+> /gassensor_XXXXXX/perminuteusag
 
 ### Einstellen des Entprellschutzes
 Über die Funktion "Set Debounce Interval" - Standard 500 Millisekunden
