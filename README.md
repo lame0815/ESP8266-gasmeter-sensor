@@ -98,6 +98,9 @@ WARNUNG: Der Zählerwert ist flüchtig. Bei einem Reset oder Stromverlust wird e
 ### Anzeige Counts per Minute
 Diese Anzeige wird alle 60 Sekunden aktualisiert und zeigt die Anzahl der Zählungen in den vorherigen 60 Sekunden
 
+### Anzeige eines Schaltvorgangs
+Wird das Relais durchgeschaltet, leuchtet die im ESP8266 eingebaute LED für genau eine Sekunde.
+
 ### Festlegen eines MQTT-Servers
 Der Sensor erzeugt auf dem MQTT-Server die Datenpunkte
 /gassensor_626491/counter und
