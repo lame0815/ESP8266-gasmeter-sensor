@@ -72,6 +72,7 @@ Das Flashen kann z.B. über das Windows-Tool FlashESP8266.exe geschehen. Dazu mu
 - den richtigen COM-Port auswählen
 - Die Firmware-Datei auswählen
 - Auf "Flash" klicken
+
 ![Flashen in ESPEasy](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/espeasy.jpg "Flashen in ESPEasy")
 
 War der Flashvorgang erfolgreich, kann man auf den ESP zugreifen.
