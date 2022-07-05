@@ -27,7 +27,7 @@ Benötigt wird: Ein ESP8266-Entwicklungsboard. Diese Boards werden auch als Deve
 und können direkt per USB programmiert und versorgt werden. Ich habe die Software mit einem "Wemos D1 Mini" kompatiblen
 Board mit 4Mb Flash ausprobiert und es läuft. Wenn Ihr Erfahrungen mit anderen Boards macht, informiert mich gerne und
 ich nehme diese mit auf.
-![Bildtext]([Linkzumbild.jpg](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/esp8266.jpg) "ESP8266 Development Board")
+![ESP8266 Development Board](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/esp8266.jpg "ESP8266 Development Board")
 
 
 ### Ein Reed-Sensor
