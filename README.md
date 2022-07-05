@@ -1,5 +1,6 @@
 # ESP8266-gasmeter-sensor
 Smarter Gaszähler-Sensor auf Basis des ESP8266
+(c) Lars Mense, 2022
 
 ## Funktionsweise und Voraussetzungen
 Der Sensor hat die Funktion, daß es den Erdgaszähler ausliest. Diese Funktion ist sehr nützlich, wenn man
@@ -76,4 +77,14 @@ Das Flashen kann z.B. über das Windows-Tool FlashESP8266.exe geschehen. Dazu mu
 ![Flashen in ESPEasy](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/espeasy.jpg "Flashen in ESPEasy")
 
 War der Flashvorgang erfolgreich, kann man auf den ESP zugreifen.
+
+## Erster Start und Konfiguration Netzwerk
+
+1. Sobald der ESP gestartet ist, spannt er ein neues WLAN auf mit dem Namen gassensor_XXXXX, wobei das XXXXX die ID des ESP ist.
+2. Man meldet sich mit dem Smartphone in dem neuen WLAN an und ruft die IP 192.168.4.1 im Webbrowser auf.
+3. der Sensor meldet sich als "Gasmeter Sensor"
+4. Im Menü Wifi Setup gibt man dann die SSID, das Wifi-Passwort ein und wählt den Auswahlbutton "Client Mode". 
+Hinweis: Teilweise steht in den Feldern Anfangs Quatsch drin, den muss man zuvor löschen.
+6. Nach dem Speichern befindet sich das Gerät im Client Mode und ist mit dem heimischen WLAN verbunden.
+7. Nun muss man die IP im Heimnetzwerk herausfinden (z.B. im Router) und kann den Sensor darüber aufrufen
 
