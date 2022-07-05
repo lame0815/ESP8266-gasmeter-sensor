@@ -90,3 +90,33 @@ Hinweis: Teilweise steht in den Feldern Anfangs Quatsch drin, den muss man zuvor
 
 ![Erster Start des Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/first-start.jpg "Erster Start des Sensors")
 
+## Funktionen
+### Anzeige des Zählerwerts
+Der Zählerwert kann unter "Set Counter Value" festgelegt werden.
+WARNUNG: Der Zählerwert ist flüchtig. Bei einem Reset oder Stromverlust wird er auf Null zurückgesetzt
+
+### Anzeige Counts per Minute
+Diese Anzeige wird alle 60 Sekunden aktualisiert und zeigt die Anzahl der Zählungen in den vorherigen 60 Sekunden
+
+### Festlegen eines MQTT-Servers
+Der Sensor erzeugt auf dem MQTT-Server die Datenpunkte
+/gassensor_626491/counter und
+/gassensor_626491/perminuteusag
+
+### Einstellen des Entprellschutzes
+Über die Funktion "Set Debounce Interval" - Standard 500 Millisekunden
+
+### Over the Air Update
+Über die Funktion Firmware Update (für spätere Releases)
+
+### REST-Schnittstelle
+Über die URL [IP]/api/QueryCounter lassen sich die Werte
+- Counter Value und
+- Counts per Minute ablesen
+Das erzeugte JSON hat folgendes Format:
+
+> { "count" : "0", "cpm" : "0" }
+
+### Double Reset
+Über das doppelte Drücken der Reset-Taste wird das Gerät temporär in
+den AP-Mode gestellt. Man kann danach wieder über das eigen erzeugt WLAN darauf zugreifen
