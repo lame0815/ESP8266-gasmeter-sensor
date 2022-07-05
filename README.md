@@ -44,6 +44,7 @@ desto empfindlicher ist der Sensor.
 Ich hatte zuerst einen Sensor-Board mit dem Namen KY-021 bestellt. Leider war der daraufgelöstete Reed-Sensor nicht empfindlich genug für meinen
 Zähler. Im zweiten Schritt habe ich daher den original Reed-Sensor ausgelötet und gegen den KSK1A66-1020 Reed-Kontakt 1xEIN 200V= 0,5A 10W AW10-20 von Meder
 ausgetauscht.
+![KY021 Sensor Modul](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/ky-021.jpg "KY021 Sensor Modul")
 
 
 #### Sensor-Positionierung
