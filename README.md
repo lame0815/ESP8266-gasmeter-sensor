@@ -36,14 +36,20 @@ Hier ist die Schwierigkeit, einen passenden Sensor zu finden. Teilweise bieten d
 Sensoren zum Kauf an, man kann diese aber auch selber bauen. Das Finden des richtigen eigenen Sensors ist mitunter 
 aber recht schwierig.
 
+
 #### Schwierigkeiten bei der Sensor-Suche
 Der Sensor muss 3,3v geeignet sein und möglichst empfindlich. Hier bestellt man am Besten mehrere Versionen und probiert den passenden
 aus. Hier gilt es auszuprobieren. Hinweis: Die Empfindlichkeit von Reed-Sensoren ist durch AT oder AW angegeben. Je niedriger die Zahl ist,
-desto empfindlicher ist der Sensor. Ich nutze den KSK1A66-1020 Reed-Kontakt 1xEIN 200V= 0,5A 10W AW10-20 von Meder
+desto empfindlicher ist der Sensor. 
+Ich hatte zuerst einen Sensor-Board mit dem Namen KY-021 bestellt. Leider war der daraufgelöstete Reed-Sensor nicht empfindlich genug für meinen
+Zähler. Im zweiten Schritt habe ich daher den original Reed-Sensor ausgelötet und gegen den KSK1A66-1020 Reed-Kontakt 1xEIN 200V= 0,5A 10W AW10-20 von Meder
+ausgetauscht.
+
 
 #### Sensor-Positionierung
 Der Sensor muss wirklich ganz exakt unter der richtigen Drehscheibe des Zählers positioniert werden. Hier gilt es:
 Bei laufender Heizung ausprobieren.
+![Sensor am Gaszähler montiert](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/sensor_montiert.jpg "Sensor am Gaszähler montiert")
 
 ### Ein USB-Netzteil 
 Die ESP8266-Entwicklungsboards werden per USB programmiert und können auch darüber betrieben werden. Hierzu genügt ein
