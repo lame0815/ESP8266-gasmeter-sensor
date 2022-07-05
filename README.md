@@ -63,5 +63,5 @@ habe ich ein Grafana aufgesetzt.
 ## Anschluss
 Der Anschluss des Sensors erfolgt über den Port D2. Hierbei ist unbedingt darauf zu achten, daß der Strom vom 3,3v-Pin zu holen ist. Die Eingänge es ESP8266 vertragen nur 3,3v, ein Anschluss von 5v kann das Modul zerstören.
 Im folgenden zwei Möglichkeiten des Anschlusses, einmal ein direkter Reed-sensor-Anschluss und einmal über das KY021
-![Anschluss des REED-Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/anschluss.png "Anschluss des REED-Sensors")
+![Anschluss des REED-Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/anschluss.jpg "Anschluss des REED-Sensors")
 
