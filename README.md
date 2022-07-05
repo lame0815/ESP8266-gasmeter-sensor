@@ -65,3 +65,14 @@ Der Anschluss des Sensors erfolgt über den Port D2. Hierbei ist unbedingt darau
 Im folgenden zwei Möglichkeiten des Anschlusses, einmal ein direkter Reed-sensor-Anschluss und einmal über das KY021
 ![Anschluss des REED-Sensors](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/anschluss.jpg "Anschluss des REED-Sensors")
 
+## Flashen
+Das Flashen kann z.B. über das Windows-Tool FlashESP8266.exe geschehen. Dazu muss man
+- Den ESP8266 per USB an den PC anschließen
+- Das Tool starten
+- den richtigen COM-Port auswählen
+- Die Firmware-Datei auswählen
+- Auf "Flash" klicken
+![Flashen in ESPEasy](https://github.com/lame0815/ESP8266-gasmeter-sensor/blob/main/readme-assets/espeasy.jpg "Flashen in ESPEasy")
+
+War der Flashvorgang erfolgreich, kann man auf den ESP zugreifen.
+
