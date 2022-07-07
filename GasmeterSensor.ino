@@ -1,4 +1,3 @@
-
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -7,6 +6,7 @@
 #include <DoubleResetDetect.h>
 #include <ElegantOTA.h>
 #include <PubSubClient.h>
+#include <NTPClient.h>
 #define DRD_TIMEOUT 2.0
 #define DRD_ADDRESS 0x00
 
@@ -27,10 +27,22 @@ static int DEBOUNCE_INTERVAL = 500;
 
 static String WIFIMODE_AP = "A";
 static String WIFIMODE_CLIENT = "C";
+static String WIFIMODE_NONE = "N";
 static String VERSION = "0.0.1";
 static String AUTHOR = "Lars Mense (<a href=\"https://www.lars-mense.de\" target=\"_blank\">www.lars-mense.de</a>)";
 String currentWifiMode;
 String macToID(const uint8_t*);
+
+// Define NTP Client to get time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
+
+//Week Days
+String weekDays[7]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+//Month names
+String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
 
 
 void connectWifi();
@@ -40,13 +52,11 @@ void handleJSONQuery();
 void handleStore();
 void handleCounterStore();
 void handleDebounceIntervalStore();
-void handleSetCounter();
 void handleCustCSS();
-void handleSetDebounceInterval();
-void handleWifiSetup();
-void handleMqttSetup();
+void handleSetDeviceSettings();
 void handleWifiStore();
 void handleMqttStore();
+void handleDeviceSettingsStore();
 void callback(char* , byte* , unsigned int);
 
 String readWiFiSSID();
@@ -91,6 +101,13 @@ void setup() {
 
   EEPROM.begin(512); //Initializing EEPROM
   currentWifiMode = readWiFiMode();
+  if (WIFIMODE_NONE.equals(currentWifiMode)) {
+    Serial.println("clearing EEPROM");
+    clearEEPROM();
+    writeWifiMode(WIFIMODE_AP);
+    currentWifiMode = WIFIMODE_AP;
+  }
+  
   /* if double reset was set: go to AP-Moe */
   if (drd.detect()) {
     currentWifiMode = WIFIMODE_AP;
@@ -113,21 +130,26 @@ void setup() {
     Serial.println("Entering Client Mode...");
     connectWifi();
     connectMqtt();
+    timeClient.begin();
+    String offset = readDeviceSettings();    
+    int iOffset = offset.toInt();
+    
+    timeClient.setTimeOffset(iOffset*3600);
     server.on("/", handleRoot);
 
   }
 
   server.on("/", handleRoot);
   server.on("/api/QueryCounter", handleJSONQuery);
-  server.on("/setupwifi", handleWifiSetup);
-  server.on("/setupmqtt", handleMqttSetup);
-  server.on("/setupdebounceinterval", handleSetDebounceInterval);
-  server.on("/setcounter", handleSetCounter);
+ 
+  server.on("/devicesettings", handleSetDeviceSettings);
   server.on("/style.css", handleCustCSS);
   server.on("/wifistore", handleWifiStore);
+  server.on("/factoryreset", handleFactoryReset);
   server.on("/mqttstore", handleMqttStore);
   server.on("/debounceintervalstore", handleDebounceIntervalStore);
   server.on("/counterstore", handleCounterStore);
+  server.on("/devicesettingsstore", handleDeviceSettingsStore);
   ElegantOTA.begin(&server);
   server.begin();
   Serial.println("HTTP server started");
@@ -170,8 +192,10 @@ void connectWifi() {
  */
 void loop() {
 
+
   /* connect Mqtt if in client mode and previously not connected */
   if (WIFIMODE_CLIENT.equals(currentWifiMode)) {
+    
     if (!mqttclient.connected()) {
       connectMqtt();
     }
@@ -225,6 +249,7 @@ void loop() {
 
   /* in client mode only: public reed info if theres are changes  */
   if (WIFIMODE_CLIENT.equals(currentWifiMode)) {
+    timeClient.update();
     MDNS.update();
     if (submitInterval) {
       mqtttSubmitUsage(prevConsumption);

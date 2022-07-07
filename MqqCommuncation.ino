@@ -27,43 +27,45 @@ void reconnectMqtt() {
  * connect mqqt
  */
 void connectMqtt() {
-  Serial.println("connect mqtt...");
+  //Serial.println("connect mqtt...");
   char cServer[32] ;
 
   /* read mqqt data from EEPROM */
   String server = readMqttServer();
-  server.toCharArray(cServer, 32);
+  if (server.length() > 5) { // connect mqtt only if servername is given
+      server.toCharArray(cServer, 32);
   
-  String port = readMqttPort();
-  String uname = readMqttUsername();
-  String pass = readMqttPass();
+      String port = readMqttPort();
+      String uname = readMqttUsername();
+      String pass = readMqttPass();
   
-  int iPort = port.toInt();
-  if (server.length() > 0 && iPort > 0)
-  {
-    Serial.print("Server ");
-    Serial.print(cServer);
-    Serial.print(" Port: ");
-    Serial.print(iPort);
-    Serial.print("\n");
+      int iPort = port.toInt();
+      if (server.length() > 0 && iPort > 0)
+      {
+          Serial.print("Server ");
+          Serial.print(cServer);
+          Serial.print(" Port: ");
+          Serial.print(iPort);
+          Serial.print("\n");
     
-    mqttclient.setServer(cServer, iPort);
-    bool success = false;  
-    char cDeviceId[32];
-    char cUname[32];
-    char cPass[32];
-    deviceId.toCharArray(cDeviceId, 32);
-    uname.toCharArray(cUname, 32);
-    pass.toCharArray(cPass, 32);
-    mqttclient.setKeepAlive(70);
-    if (uname.length() > 0) {
+          mqttclient.setServer(cServer, iPort);
+          bool success = false;  
+          char cDeviceId[32];
+          char cUname[32];
+          char cPass[32];
+          deviceId.toCharArray(cDeviceId, 32);
+           uname.toCharArray(cUname, 32);
+          pass.toCharArray(cPass, 32);
+          mqttclient.setKeepAlive(70);
+           if (uname.length() > 0) {
      
-      success = mqttclient.connect(cDeviceId, cUname, cPass);
-    } else {
-      success = mqttclient.connect(cDeviceId);
-    }    
-    Serial.println("mqqt connect successful: "+success);
-    mqttclient.setCallback(callback);
+             success = mqttclient.connect(cDeviceId, cUname, cPass);
+          } else {
+             success = mqttclient.connect(cDeviceId);
+         }    
+          Serial.println("mqqt connect successful: "+success);
+          mqttclient.setCallback(callback);
+      }
   }
   
 }

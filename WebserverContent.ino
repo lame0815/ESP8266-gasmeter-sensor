@@ -3,6 +3,8 @@
  * root page on /
  */
 void handleRoot() {
+
+   String formattedTime = timeClient.getFormattedTime();
   String text = generateHTMLHead("Gasmeter Sensor");
   
   text = text + "<div class=\"status\"><div class=\"tablerow\">";
@@ -59,6 +61,9 @@ void handleRoot() {
   text = text + "<div class=\"tablecell\">";
   text = text + WiFi.localIP().toString();
   text = text + "</div>";
+    text = text + "<div class=\"tablecell\">";
+  text = text + formattedTime;
+  text = text + "</div>";
   text = text + "</div>";
   
   text = text + "<div class=\"column\"><h2>Counter:</h2></div><div class=\"counter\" id=\"counter\" ></div>";
@@ -67,11 +72,8 @@ void handleRoot() {
   text = text + "</div></div>";
  
   text = text + "<div class=\"menu menu-horizontal\"><ul class=\"menu-list\">";
-  text = text + "<li class=\"menu-item\"><a href=\"/setupwifi\" type=\"button\">Wifi Setup</a></li>";
-  text = text + "<li class=\"menu-item\"><a href=\"/setupmqtt\" type=\"button\">MQTT Setup</a></li>";
-  text = text + "<li class=\"menu-item\"><a href=\"/setcounter\" type=\"button\">Set Counter value</a></li>";
-  text = text + "<li class=\"menu-item\"><a href=\"/setupdebounceinterval\" type=\"button\">Set Debounce Interval</a></li>";
-  text = text + "<li class=\"menu-item\"><a href=\"/update\" type=\"button\">Firmware Update</a></li>";
+
+  text = text + "<li class=\"menu-item\"><a href=\"/devicesettings\" type=\"button\">System Setup</a></li>";
   text = text + "</ul></div>";
   text = text + generateHTMLFooter();
   server.send(200, "text/html", text);
@@ -79,75 +81,108 @@ void handleRoot() {
 
 
 
+
 /**
- * Wifi setup page
+ * Debounce form handler
  */
-void handleWifiSetup() {
-  String text = generateHTMLHead("Wifi SETUP");
-  text = text + "<div class=\"row\">";
-  text = text + "<div class=\"column\"><h2>Wifi Setup</h2></div>";
+void handleSetDeviceSettings() {
+
+  String offset = readDeviceSettings();
+  Serial.println(offset);  
+  
+  int iOffset = offset.toInt();  
+  Serial.println("OFFSET");
+  Serial.println(iOffset);
+
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  
+  String text = generateHTMLHead("SETUP Gasmeter Config");  
+
+  server.sendContent(text);
+  
+  text = "<div class=\"row\">";
+
+text = text + "<ul><li style=\"float: none\"><a href=\"/\">back</a></li></ul>";
+
+text = text + "<div class=\"column\"><h2>Network Setup</h2></div>";
      text = text + "<div class=\"column\">";
   text = text + "<form action=\"/wifistore\" class=\"cust-form cust-form-stacked\" method=\"POST\"><fieldset>";
 
-  text = text + "<legend>Wifi Data</legend>";
+  text = text + "<legend>Wifi Setup</legend>";
   text = text + "<label for=\"ssid\">* SSID</label><input type=\"text\" id=\"ssid\" name=\"ssid\" maxlength=\"32\" value=\""+readWiFiSSID()+"\" placeholder=\"Wifis ssid\" required ></input>";
   text = text + "<label for=\"pass\">* Wifi-Pass</label><input type=\"text\" id=\"pass\" name=\"pass\" maxlength=\"64\" value=\""+readWiFiPass()+"\" placeholder=\"Wifis pass\" required ></input>";
 
+  server.sendContent(text);
+
   String wifimode = readWiFiMode();
-  text = text + "<label for=\"clientmode\" class=\"radio\"><input type=\"radio\" id=\"clientmode\" name=\"wifimode\" value=\"C\" ";
+  text =  "<label for=\"clientmode\" class=\"radio\"><input type=\"radio\" id=\"clientmode\" name=\"wifimode\" value=\"C\" ";
   if (WIFIMODE_CLIENT.equals(wifimode)) text = text + " checked ";
   text = text + "/>* Client Mode</label>";
   text = text + "<label for=\"apmode\" class=\"radio\"><input type=\"radio\" id=\"apmode\" name=\"wifimode\" value=\"A\" ";
   if (WIFIMODE_AP.equals(wifimode)) text = text + " checked ";
   text = text + "/>Access Point Mode</label>";
 
-   text = text + "<br/><ul><li><a href=\"/\">back</a></li><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
+   text = text + "<ul><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
  
   text = text + "</fieldset></form>";
   text = text + "</div>";
-  text = text + "</div>";
-  text = text + generateHTMLFooter();
-  server.send(200, "text/html", text);
-}
 
-/**
- * MQQT Setup Page
- */
-void handleMqttSetup() {
-  String text = generateHTMLHead("SETUP Gasmeter Counter");
-  text = text + "<div class=\"row\">";
-  text = text + "<div class=\"column\"><h2>MQTT Setup</h2></div>";
      text = text + "<div class=\"column\">";
   text = text + "<form action=\"/mqttstore\" class=\"form-stacked\" method=\"POST\"><fieldset>";
 
-  text = text + "<legend>Mqqt Setup Date</legend>";
+  text = text + "<legend>Mqqt Server</legend>";
   text = text + "<label for=\"mqttserver\">* MQQT Server</label><input type=\"text\" id=\"mqttserver\" maxlength=\"100\" name=\"mqttserver\" value=\""+readMqttServer()+"\" placeholder=\"aaa.bbb.ccc.ddd\" required ></input>";
   text = text + "<label for=\"mqttport\">* MQQT Port</label><input id=\"mqttport\" name=\"mqttport\" type=\"number\" min=\"1\" step=\"1\" max=\"65536\" value=\""+readMqttPort()+"\" placeholder=\"1883\" required ></input>";
   text = text + "<label for=\"mqttusername\">MQQT Username</label><input type=\"text\" id=\"mqttusername\" maxlength=\"20\" name=\"mqttusername\" value=\""+readMqttUsername()+"\" placeholder=\"youruser\" ></input>";
   text = text + "<label for=\"mqttpassword\">MQQT Password</label><input type=\"text\" id=\"mqttpassword\" maxlength=\"50\" name=\"mqttpassword\" value=\""+readMqttPass()+"\" placeholder=\"yourpass\" ></input>";
-  text = text + "<ul><li><a href=\"/\">back</a></li><li class=\"primary\"><button type=\"submit\" class=\"custbutton\">Save</button></li></ul>";
+  text = text + "<ul><li class=\"primary\"><button type=\"submit\" class=\"custbutton\">Save</button></li></ul>";
  
   text = text + "</fieldset></form>";
   text = text + "</div>";
-  text = text + "</div>";
-  text = text + generateHTMLFooter();
-  server.send(200, "text/html", text);
-}
 
-
-/* 
- *  counter form handler
- */
-void handleSetCounter() {
-  String text = generateHTMLHead("SETUP Gasmeter Counter");
-  text = text + "<div class=\"row\">";
-  text = text + "<div class=\"column\"><h2>Set counter</h2></div>";
+  server.sendContent(text);
+  text = "<hr><div class=\"column\"><h2>Device & Sensor Settings</h2></div>";
      text = text + "<div class=\"column\">";
+  text = text + "<form action=\"/devicesettingsstore\" required class=\"cust-form cust-form-stacked\" method=\"POST\"><fieldset>";
+
+  text = text + "<legend>Timezone</legend>";
+  text = text + "<label for=\"mqttserver\">* Timezone GMT </label><select id=\"timezone\" name=\"timezone\">";
+  for (int y=-12; y<13; y++) {
+    text = text + "<option value=\"";
+    text = text + y;
+    text = text +"\"";
+    if (iOffset == y) {
+      text = text + " selected";
+    }
+    text = text +" >";
+    text = text + y;
+    text = text + "</option>";
+  }
+  
+
+  text = text + "</select>";
+ text = text + "<ul><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
+ 
+  text = text + "</fieldset></form>";
+  server.sendContent(text);
+
+     text = "<div class=\"column\">";
+  text = text + "<form action=\"/debounceintervalstore\" required class=\"cust-form cust-form-stacked\" method=\"POST\"><fieldset>";
+
+  text = text + "<legend>Debounce Interval</legend>";
+  text = text + "<label for=\"mqttserver\">* Debounce Interval (millis)</label><input id=\"debounceinterval\" name=\"debounceinterval\" type=\"number\" min=\"1\" max=\"9999\" step=\"1\" value=\""+debounceinterval+"\" required ></input>";
+ text = text + "<ul><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
+ 
+  text = text + "</fieldset></form>";
+  text = text + "</div>";
+  server.sendContent(text);
+
+     text = "<div class=\"column\">";
   text = text + "<form action=\"/counterstore\" type=\"number\" step=\"1\" required class=\"cust-form cust-form-stacked\" method=\"POST\"><fieldset>";
 
-  text = text + "<legend>Mqqt Setup Date</legend>";
+  text = text + "<legend>Counter Value</legend>";
   text = text + "<label for=\"mqttserver\">* Counter Value</label><input id=\"counter\" name=\"counter\" type=\"number\" min=\"1\" max=\"2147483647\" step=\"1\" value=\""+zaehlerstand+"\" required ></input>";
-    text = text + "<ul><li><a href=\"/\">back</a></li><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
+    text = text + "<ul><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
  
   text = text + "</fieldset></form>";
   text = text + "</div>";
@@ -156,29 +191,28 @@ void handleSetCounter() {
   text = text + "The counter value is not memory persistent. In case of a reset or power loss, counter value will be reset to 0<br/>";
   text = text + "API-REST-Call: <a href=\"/api/QueryCounter\" target=\"_blank\">/api/QueryCounter</a>";
   text = text + "</div>";
-  text = text + generateHTMLFooter();
-  server.send(200, "text/html", text);
-}
+  server.sendContent(text);
 
-/**
- * Debounce form handler
- */
-void handleSetDebounceInterval() {
-  String text = generateHTMLHead("SETUP Gasmeter Config");
-  text = text + "<div class=\"row\">";
-  text = text + "<div class=\"column\"><h2>Set Debounce Interval (millis)</h2></div>";
-     text = text + "<div class=\"column\">";
-  text = text + "<form action=\"/debounceintervalstore\" required class=\"cust-form cust-form-stacked\" method=\"POST\"><fieldset>";
+  text = "<hr><div class=\"menu menu-horizontal\"><ul class=\"menu-list\">";
+   text = text + "<li class=\"menu-item-vertical\"><a href=\"/update\" type=\"button\">Firmware Update</a></li>";
+  text = text + "<li class=\"menu-item-vertical\" style=\"background-color: red;\"><a href=\"/factoryreset\"  type=\"button\" onclick=\"if (confirm('Do you really want to perform a factory reset?')){return true;}else{event.stopPropagation(); event.preventDefault();};\">FACTORY RESET</a></li>";
+  text = text + "</ul></div>";
+  
+  text = text + "</div>";
 
-  text = text + "<legend>Mqqt Setup Date</legend>";
-  text = text + "<label for=\"mqttserver\">* Debounce Interval (millis)</label><input id=\"debounceinterval\" name=\"debounceinterval\" type=\"number\" min=\"1\" max=\"9999\" step=\"1\" value=\""+debounceinterval+"\" required ></input>";
- text = text + "<ul><li><a href=\"/\">back</a></li><li class=\"primary\"><button type=\"submit\" class=\"cust-button cust-button-primary\">Save</button></li></ul>";
- 
-  text = text + "</fieldset></form>";
+
+
+
+  
   text = text + "</div>";
-  text = text + "</div>";
+
+
+  
   text = text + generateHTMLFooter();
-  server.send(200, "text/html", text);
+  server.sendContent(text);
+server.sendContent("");
+  
+ // server.send(200, "text/html", text);
 }
 
 
@@ -204,6 +238,22 @@ void handleCounterStore() {
       String counter = server.arg("counter");
       Serial.println("from form: counter"+counter);
       zaehlerstand = counter.toInt();
+      String text = generateHTMLHead("Gasmeter Counter");
+      text = text + "<div class=\"row\">";
+      text = text + "<div class=\"column\"><h1>OK</div>";
+      text = text + "<div class=\"column\"><a href=\"/\">back</a></div>";
+      text = text + "</div>";
+      text = text + generateHTMLFooter();
+      server.send(200, "text/html", text);
+}
+
+
+void handleDeviceSettingsStore() {
+      String timezone = server.arg("timezone");
+      Serial.println("from form: timezone"+timezone);
+      int tz = timezone.toInt();
+      writeDeviceSettings(timezone);
+      timeClient.setTimeOffset(tz*3600);
       String text = generateHTMLHead("Gasmeter Counter");
       text = text + "<div class=\"row\">";
       text = text + "<div class=\"column\"><h1>OK</div>";
@@ -254,6 +304,12 @@ void handleWifiStore() {
      
       server.send(200, "text/html", "Executed device Reset. Please reconnect to your device.");
       ESP.reset();
+}
+
+void handleFactoryReset() {
+     clearEEPROM();
+     server.send(200, "text/html", "Executed factory Reset. Please reconnect to your device.");
+     ESP.reset();
 }
 
 

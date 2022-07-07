@@ -36,6 +36,13 @@ void handleCustCSS() {
   text = text + "background-color: #666666;";  
   text = text + "border-radius: 10px;";
   text = text + "}";
+  text = text + "li.menu-item-vertical {";
+  text = text + "text-align: center;";
+  text = text + "padding: 16px;";
+  text = text + "margin: 2px;";
+  text = text + "background-color: #666666;";  
+  text = text + "border-radius: 10px;";
+  text = text + "}";
   text = text + "li.primary {";
   text = text + "background-color: #17b8ea";
   text = text + "}";

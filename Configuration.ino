@@ -1,11 +1,23 @@
+
+void clearEEPROM() {
+     Serial.println("clearing eeprom");
+        for (int i = 0; i < 278; ++i) {
+          EEPROM.write(i, ' ');
+          Serial.println(".");
+        }
+     EEPROM.commit();
+}
+
+void writeWifiMode(String wifimode) {
+  EEPROM.write(96, wifimode[0]); 
+  EEPROM.commit();
+}
+
 /*
  * write Wifi Configuration to EEPROM
  */
 void writeWifiConfiguration(String qsid, String qpass, String wifimode) {
-   Serial.println("clearing eeprom");
-        for (int i = 0; i < 97; ++i) {
-          EEPROM.write(i, ' ');
-        }
+
         Serial.println("ssid");
         Serial.println(qsid);
         Serial.println("password");
@@ -109,6 +121,26 @@ void writeDebounceInterval(String debounce) {
         
 }
 
+
+void writeDeviceSettings(String timezone) {
+   Serial.println("clearing eeprom");
+        for (int i = 278; i < 281; ++i) {
+          EEPROM.write(i, ' ');
+        }        
+        Serial.println("timezone");
+       
+        
+        Serial.println("writing timezone:");
+        for (int i = 0; i < timezone.length(); ++i)
+        {
+          EEPROM.write(278 + i, timezone[i]);
+          Serial.print("Wrote: ");
+          Serial.println(timezone[i]);
+        }                 
+        EEPROM.commit();
+        
+}
+
 /*
  * read Debounce Interval from EEPROM
  */
@@ -117,6 +149,23 @@ String readDebounceInterval() {
 
   String epass = "";
   for (int i = 273; i < 278; ++i)
+  {
+    epass += char(EEPROM.read(i));
+  }
+  Serial.print("readDebounceInterval: ");
+  Serial.println(epass);
+   epass.trim();
+  return epass;
+}
+
+/*
+ * read Debounce Interval from EEPROM
+ */
+String readDeviceSettings() {
+  Serial.println("Reading readDebounceInterval");
+
+  String epass = "";
+  for (int i = 278; i < 281; ++i)
   {
     epass += char(EEPROM.read(i));
   }
@@ -161,13 +210,16 @@ String readWiFiMode() {
   Serial.println();
   Serial.print("wifimode:");
   Serial.print(wifimode);
-  if (wifimode == "C") {
+  if (wifimode.equals("C")) {
     return "C";
-  } else {
+  } else if (wifimode.equals("A")) {
     return "A";
+  } else {
+    return "N";
   }
   
 }
+
 
 /*
  * read Wifi Pass from EEPROM
@@ -187,15 +239,14 @@ String readWiFiPass() {
 }
 
 String readMqttServer() {
-  Serial.println("Reading Mqqt pass");
+  //Serial.println("Reading Mqqt pass");
 
   String epass = "";
   for (int i = 97; i < 197; ++i)
   {
     epass += char(EEPROM.read(i));
   }
-  Serial.print("MqqtServer: ");
-  Serial.println(epass);
+  //Serial.print("MqqtServer: ");
    epass.trim();
   return epass;
 }
@@ -204,7 +255,6 @@ String readMqttServer() {
  * read Mqtt Port from EEPROM
  */
 String readMqttPort() {
-  Serial.println("Reading Mqqt pass");
 
   String epass = "";
   for (int i = 197; i < 203; ++i)
@@ -212,7 +262,6 @@ String readMqttPort() {
     epass += char(EEPROM.read(i));
   }
   Serial.print("Mqtt Port: ");
-  Serial.println(epass);
    epass.trim();
   return epass;
 }
@@ -221,15 +270,12 @@ String readMqttPort() {
  * read Mqtt Username from EEPROM
  */
 String readMqttUsername() {
-  Serial.println("Reading Mqqt pass");
 
   String epass = "";
   for (int i = 203; i < 223; ++i)
   {
     epass += char(EEPROM.read(i));
   }
-  Serial.print("MqttUsername: ");
-  Serial.println(epass);
   epass.trim();
   return epass;
 }
@@ -238,15 +284,18 @@ String readMqttUsername() {
  * read Mqtt Password from EEPROM
  */
 String readMqttPass() {
-  Serial.println("Reading Mqqt pass");
+  
 
   String epass = "";
   for (int i = 223; i < 273; ++i)
   {
     epass += char(EEPROM.read(i));
   }
-  Serial.print("MqttPass: ");
-  Serial.println(epass);
+  
    epass.trim();
+   if (epass.length() > 0) {
+    Serial.print("MqttPass: ");
+    Serial.println(epass);
+   }
   return epass;
 }
