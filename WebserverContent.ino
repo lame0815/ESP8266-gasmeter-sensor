@@ -4,6 +4,8 @@
  */
 void handleRoot() {
 
+
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
    String formattedTime = timeClient.getFormattedTime();
   String text = generateHTMLHead("Gasmeter Sensor");
   
@@ -49,7 +51,11 @@ void handleRoot() {
   }
     text = text + errorText + "</p>";
   text = text + "</div>";
-  text = text + "<div class=\"tablecell\">";
+
+
+  server.sendContent(text);
+  
+  text = "<div class=\"tablecell\">";
 
   
   if (currentWifiMode == WIFIMODE_AP) {
@@ -70,16 +76,56 @@ void handleRoot() {
   text = text + "</div></div>";
   text = text + "<div class=\"column\"><h2>Counts per Minute:</h2></div><div class=\"cpm\" id=\"cpm\" ></div>";
   text = text + "</div></div>";
+  
+  text = text + "<div class=\"column\"><h2>Today and Previous Day:</h2></div>";
+  
+  server.sendContent(text);
+  
+  text = renderHistory();
+  
+  server.sendContent(text);
  
-  text = text + "<div class=\"menu menu-horizontal\"><ul class=\"menu-list\">";
+  text = "<div class=\"menu menu-horizontal\"><ul class=\"menu-list\">";
 
   text = text + "<li class=\"menu-item\"><a href=\"/devicesettings\" type=\"button\">System Setup</a></li>";
   text = text + "</ul></div>";
   text = text + generateHTMLFooter();
-  server.send(200, "text/html", text);
+  server.sendContent(text);
+  server.sendContent("");
+  //server.send(200, "text/html", text);
 }
 
 
+/**
+ * render history as html
+ */
+String renderHistory() {
+  String text = "<table border=\"1\">";
+  text = text + "<tr><th>Hour</th><th>Today (";
+  if (currday > -1) {
+    text = text + currday;
+  } else {
+    text = text + "N.N.";
+  }
+  text = text + ")</th><th>Previous Day (";
+  if (yesterday > -1) {
+    text = text + yesterday;
+  } else {
+    text = text + "N.N.";
+  }
+  text = text + ") </th></tr>";
+  for (int x= 0; x<24; x++) {
+    text = text + "<tr><td>";
+    text = text + x;
+    text = text + "</td><td>";
+    text = text + todayusage[x];
+    text = text + "</td><td>";
+    text = text + yesterdayusage[x];
+    text = text +"</td>";
+  }
+  text = text + "</table>";
+  return text;
+}
 
 
 /**

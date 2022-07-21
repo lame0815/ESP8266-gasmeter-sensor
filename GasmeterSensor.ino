@@ -22,13 +22,20 @@ int lastReedState = -1;
 int consumptionSubmitInterval = 0;
 int consumptioncounter = 0;
 
+
+int currday = -1;
+int yesterday = -1;
+int todayusage[24] = {0};
+int yesterdayusage[24] = {0};
+
+
 static int SENSOR_PIN = D2;
 static int DEBOUNCE_INTERVAL = 500;
 
 static String WIFIMODE_AP = "A";
 static String WIFIMODE_CLIENT = "C";
 static String WIFIMODE_NONE = "N";
-static String VERSION = "0.0.1";
+static String VERSION = "0.0.3";
 static String AUTHOR = "Lars Mense (<a href=\"https://www.lars-mense.de\" target=\"_blank\">www.lars-mense.de</a>)";
 String currentWifiMode;
 String macToID(const uint8_t*);
@@ -38,10 +45,10 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 //Week Days
-String weekDays[7]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+String weekDays[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 //Month names
-String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 
 
@@ -107,7 +114,7 @@ void setup() {
     writeWifiMode(WIFIMODE_AP);
     currentWifiMode = WIFIMODE_AP;
   }
-  
+
   /* if double reset was set: go to AP-Moe */
   if (drd.detect()) {
     currentWifiMode = WIFIMODE_AP;
@@ -131,17 +138,17 @@ void setup() {
     connectWifi();
     connectMqtt();
     timeClient.begin();
-    String offset = readDeviceSettings();    
+    String offset = readDeviceSettings();
     int iOffset = offset.toInt();
-    
-    timeClient.setTimeOffset(iOffset*3600);
+
+    timeClient.setTimeOffset(iOffset * 3600);
     server.on("/", handleRoot);
 
   }
 
   server.on("/", handleRoot);
   server.on("/api/QueryCounter", handleJSONQuery);
- 
+
   server.on("/devicesettings", handleSetDeviceSettings);
   server.on("/style.css", handleCustCSS);
   server.on("/wifistore", handleWifiStore);
@@ -165,8 +172,8 @@ void setup() {
 }
 
 /*
- * Perform Wifi COnnection as CLient 
- */
+   Perform Wifi COnnection as CLient
+*/
 void connectWifi() {
   // Wait for connection
   WiFi.mode(WIFI_STA);
@@ -188,14 +195,14 @@ void connectWifi() {
 }
 
 /*
- * The Loop
- */
+   The Loop
+*/
 void loop() {
 
 
   /* connect Mqtt if in client mode and previously not connected */
   if (WIFIMODE_CLIENT.equals(currentWifiMode)) {
-    
+
     if (!mqttclient.connected()) {
       connectMqtt();
     }
@@ -211,10 +218,11 @@ void loop() {
   }
 
   /* check Reed status */
-  if (val == LOW) { 
+  if (val == LOW) {
     if (lastReedState == HIGH) { // falling level - Debouncing
       if (millis() - lastvalidinterrupt > debounceinterval) {
         Serial.println("count++");
+        feedhistory();
         zaehlerstand = zaehlerstand + 1;
         countPlus = true;
         Serial.println("****************** ");
@@ -268,9 +276,42 @@ void loop() {
 
 }
 
-/*
- * small tool concert mac id to String 
+/**
+ * add count to history
  */
+void feedhistory() {
+  if (timeClient.isTimeSet()) {
+    int hours = timeClient.getHours();
+    int day = timeClient.getDay();
+    if (day != currday) {
+      copyArray(todayusage, yesterdayusage, 24);
+      resetArray(todayusage,24);
+      yesterday = currday;
+      currday = day;
+    }
+    int prevcount = todayusage[(hours - 1)];
+    prevcount++;
+    todayusage[(hours - 1)] = prevcount;
+  }
+}
+
+/* simple int array copy mechnism */
+void copyArray(int arrayOriginal[], int arrayCopy[], int arraySize) { //Copy function
+  for (int i = 0; i < arraySize; i++) {
+    arrayCopy[i] = arrayOriginal[i];
+  }
+}
+
+/* reset int array to 0 */
+void resetArray(int arrayOriginal[], int arraySize) { //Copy function
+  for (int i = 0; i < arraySize; i++) {
+    arrayOriginal[i] = 0;
+  }
+}
+
+/*
+   small tool concert mac id to String
+*/
 String macToID(const uint8_t* mac)
 {
   String result;
