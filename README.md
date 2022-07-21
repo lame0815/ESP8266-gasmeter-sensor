@@ -98,6 +98,13 @@ WARNUNG: Der Zählerwert ist flüchtig. Bei einem Reset oder Stromverlust wird e
 ### Anzeige Counts per Minute
 Diese Anzeige wird alle 60 Sekunden aktualisiert und zeigt die Anzahl der Zählungen in den vorherigen 60 Sekunden
 
+### Anzeige der 2-Tageshistorie
+Unter "Today and Previous Day" zeigt das System eine Tabelle der letzten zwei Messtagen an.
+Das System zeigt pro Tag die "counts" pro Stunde an. Messtag bedeutet hier, daß nur die Tage
+dargestellt werden, an denen Gas bezogen wurde. Wird z.B. am 3.12. Gas bezogen, am 4.12. nicht, am 5.12 aber wieder
+dann zeigt die Tabelle unter Today den 5.12. und Previous Day den 3.12. an.
+WARNUNG: Die Statistik ist flüchtig. Bei einem Reset oder Stromverlust wird sie auf Null zurückgesetzt
+
 ### Anzeige eines Schaltvorgangs
 Wird das Relais durchgeschaltet, leuchtet die im ESP8266 eingebaute LED für genau eine Sekunde.
 
