@@ -35,7 +35,7 @@ static int DEBOUNCE_INTERVAL = 500;
 static String WIFIMODE_AP = "A";
 static String WIFIMODE_CLIENT = "C";
 static String WIFIMODE_NONE = "N";
-static String VERSION = "0.0.3";
+static String VERSION = "0.1.0";
 static String AUTHOR = "Lars Mense (<a href=\"https://www.lars-mense.de\" target=\"_blank\">www.lars-mense.de</a>)";
 String currentWifiMode;
 String macToID(const uint8_t*);
@@ -289,9 +289,9 @@ void feedhistory() {
       yesterday = currday;
       currday = day;
     }
-    int prevcount = todayusage[(hours - 1)];
+    int prevcount = todayusage[hours];
     prevcount++;
-    todayusage[(hours - 1)] = prevcount;
+    todayusage[hours] = prevcount;
   }
 }
 

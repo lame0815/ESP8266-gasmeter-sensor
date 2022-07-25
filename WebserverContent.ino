@@ -101,20 +101,25 @@ void handleRoot() {
  */
 String renderHistory() {
   String text = "<table border=\"1\">";
-  text = text + "<tr><th>Hour</th><th>Today (";
-  if (currday > -1) {
-    text = text + currday;
+  text = text + "<thead><tr><th>Hour</th><th>Last Day (";
+  if (currday > -1 && currday < 7) {
+    text = text + weekDays[currday];
   } else {
     text = text + "N.N.";
   }
   text = text + ")</th><th>Previous Day (";
-  if (yesterday > -1) {
-    text = text + yesterday;
+  if (yesterday > -1 && yesterday < 7) {
+    text = text + weekDays[yesterday];
   } else {
     text = text + "N.N.";
   }
-  text = text + ") </th></tr>";
+  text = text + ") </th></tr></thead>";
+  int totaltoday = 0;
+  int totalyesterday = 0;
+  
   for (int x= 0; x<24; x++) {
+    totaltoday = totaltoday + todayusage[x];
+    totalyesterday = totalyesterday + yesterdayusage[x];
     text = text + "<tr><td>";
     text = text + x;
     text = text + "</td><td>";
@@ -123,6 +128,11 @@ String renderHistory() {
     text = text + yesterdayusage[x];
     text = text +"</td>";
   }
+  text = text + "<tfoot><tr><th>Total</th><th>";
+  text = text + totaltoday;
+  text = text + "</th><th>";
+  text = text + totalyesterday;
+  text = text + "</th></tr></tfoot>";
   text = text + "</table>";
   return text;
 }
